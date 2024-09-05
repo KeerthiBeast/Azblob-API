@@ -42,15 +42,6 @@ def download_upload():
     thread = threading.Thread(target=run_subprocess_playlist)
     thread.start()
 
-    """log = os.path.exists('log.txt')
-    if not log:
-        return ("Internal error", 500)
-
-    with open('log.txt', mode='r', encoding='utf-8') as file:
-        log_content = file.readlines()
-    os.remove('log.txt')
-    log_json = {'logs': [entry.strip() for entry in log_content]}"""
-
     return jsonify({"message": "Downloading Playlist"})
 
 @app.route('/song', methods=['POST'])
