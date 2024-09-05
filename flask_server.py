@@ -6,13 +6,9 @@ import threading
 
 load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'this is life'
+app.config['SECRET_KEY'] = 'Azblob_api'
 
-def get_mp3_files():
-    all_files = os.listdir('.')
-    mp3_files = [file for file in all_files if file.endswith('.mp3')]
-    return mp3_files
-
+#Starts subprocess for download playlists and songs
 def run_subprocess_playlist():
     command = ['python3 playlist.py'] 
     print("Subprocess commences")
@@ -23,17 +19,19 @@ def run_subprocess_song():
     print("Subprocess commences")
     subprocess.check_call(command, shell=True, stdout=sys.stdout, stderr=subprocess.STDOUT)
 
+#To check the status of the api
 @app.route('/api')
 def response():
     return jsonify({"message": "Working"})
 
+#To download playlist
 @app.route('/playlist', methods=['POST'])
 def download_upload():
-    data = request.get_json()
+    data = request.get_json() #parse the json and get the data
     if not data.get('playlist_url'):
         return ("Pass the playlist_url"), 400
     playlist_url = data.get('playlist_url')
-    os.environ['PLAYLIST'] = playlist_url
+    os.environ['PLAYLIST'] = playlist_url #the playlist value in the .env is changed with the new value
     
     thread = threading.Thread(target=run_subprocess_playlist)
     thread.start()
@@ -42,11 +40,11 @@ def download_upload():
 
 @app.route('/song', methods=['POST'])
 def download_upload_song():
-    data = request.get_json()
+    data = request.get_json() #parse the json and get the data
     if not data.get('song_url'):
         return ("Pass the song_url"), 400
     song_url = data.get('song_url')
-    os.environ['SONG'] = song_url
+    os.environ['SONG'] = song_url #the song value in the .env is changed with the new value
     
     thread = threading.Thread(target=run_subprocess_song)
     thread.start()

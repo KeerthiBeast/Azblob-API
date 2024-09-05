@@ -1,28 +1,33 @@
+#Download songs
+
+"""Works almost the same as playlist.py but does not see if the file is already present in 
+the blob storage. If the file exists an exception will be thrown and the process end."""
+
 import os
 from azure.identity import ClientSecretCredential
 from azure.storage.blob import BlobServiceClient
 from spotdl import Spotdl
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv() #Load .env
 
+#Get mp3 files in the local folder
 def get_mp3_files():
     all_files = os.listdir('.')
     mp3_files = [file for file in all_files if file.endswith('.mp3')]
     return mp3_files
 
-"""def get_name_only(mp3_files):
-    names = [line.split('-',1)[1].lstrip() for line in mp3_files if '-' in line]
-    return names"""
-
+#Initialize the spotdl library
 spotdl = Spotdl(
     client_id=os.getenv('SP_CLIENT_ID'),
     client_secret=os.getenv('SP_CLIENT_SECRET')
 )
 
+#Main function
 def download_upload():
     print("Downloading songs")
     accountUrl = os.getenv('AZURE_CONTAINER')
+    #Initialize Azure storage library
     Account = ClientSecretCredential(
         tenant_id = os.getenv('AZURE_TENANT_ID'),
         client_id = os.getenv('AZURE_CLIENT_ID'),
@@ -31,7 +36,6 @@ def download_upload():
 
     blobServiceClient = BlobServiceClient(accountUrl, credential=Account)
     containerName = "songs"
-    songsBlob = blobServiceClient.get_container_client(container=containerName)
     songs = spotdl.search([os.getenv('SONG')])
 
     spotdl.download(songs[0])
