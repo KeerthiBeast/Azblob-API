@@ -1,7 +1,7 @@
 import os, sys
 from dotenv import load_dotenv
 import subprocess
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import threading
 
 load_dotenv()
@@ -26,10 +26,6 @@ def run_subprocess_song():
 @app.route('/api')
 def response():
     return jsonify({"message": "Working"})
-
-@app.route('/web')
-def index():
-    return render_template('index.html')
 
 @app.route('/playlist', methods=['POST'])
 def download_upload():
